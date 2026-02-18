@@ -16,50 +16,61 @@ class Program
         while (true)
         {
             Console.WriteLine("\nSelect mode:");
-            Console.WriteLine("1: Create and serialize new user");
-            Console.WriteLine("2: Deserialize user from file");
+            Console.WriteLine("1: Create and serialize new users");
+            Console.WriteLine("2: Deserialize user(s) from file");
             Console.WriteLine("3: Exit");
             Console.Write("Enter your choice (1 - 3): ");
             var mode = Console.ReadLine();
 
             if (mode == "1")
             {
-                Console.Write("Enter user name: ");
-                var name = Console.ReadLine();
+                int userCount = 1;
+                Console.Write("How many users do you want to create? ");
+                if (!int.TryParse(Console.ReadLine(), out userCount) || userCount <= 0)
+                    userCount = 1;
 
-                Console.Write("Enter age: ");
-                int age = int.TryParse(Console.ReadLine(), out int tmpAge) ? tmpAge : 0;
-
-                Console.Write("Enter email: ");
-                var email = Console.ReadLine();
-
-                Console.Write("Enter gender: ");
-                var gender = Console.ReadLine();
-
-                Console.Write("Enter date of birth (yyyy-mm-dd): ");
-                var dobInput = Console.ReadLine();
-                DateTime dob = DateTime.TryParse(dobInput, out DateTime tmpDob) ? tmpDob : DateTime.MinValue;
-
-                var user = new User
+                var users = new List<User>();
+                for (int i = 0; i < userCount; i++)
                 {
-                    Name = name,
-                    Age = age,
-                    Email = email,
-                    Gender = gender,
-                    DateOfBirth = dob
-                };
+                    Console.WriteLine($"\n--- User #{i + 1} ---");
 
-                Console.Write("Enter file name to save (without extension): ");
+                    Console.Write("Enter user name: ");
+                    var name = Console.ReadLine();
+
+                    Console.Write("Enter age: ");
+                    int age = int.TryParse(Console.ReadLine(), out int tmpAge) ? tmpAge : 0;
+
+                    Console.Write("Enter email: ");
+                    var email = Console.ReadLine();
+
+                    Console.Write("Enter gender: ");
+                    var gender = Console.ReadLine();
+
+                    Console.Write("Enter date of birth (yyyy-mm-dd): ");
+                    var dobInput = Console.ReadLine();
+                    DateTime dob = DateTime.TryParse(dobInput, out DateTime tmpDob) ? tmpDob : DateTime.MinValue;
+
+                    users.Add(new User
+                    {
+                        Name = name,
+                        Age = age,
+                        Email = email,
+                        Gender = gender,
+                        DateOfBirth = dob
+                    });
+                }
+
+                Console.Write("\nEnter file name to save users (without extension): ");
                 var fileName = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(fileName)) fileName = "user.json";
-                if (!fileName.EndsWith(".json")) fileName += ".json";
+                if (string.IsNullOrWhiteSpace(fileName)) fileName = "users.json";
+                fileName = Path.GetFileNameWithoutExtension(fileName) + ".json";
                 var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
                 try
                 {
-                    var json = JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true });
+                    var json = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText(filePath, json);
-                    Console.WriteLine($"User data has been saved to {fileName}");
+                    Console.WriteLine($"User list has been saved to {fileName}");
                 }
                 catch (Exception ex)
                 {
@@ -95,17 +106,57 @@ class Program
                     try
                     {
                         var json = File.ReadAllText(selectedFile);
-                        var user = JsonSerializer.Deserialize<User>(json);
-                        if (user != null && !string.IsNullOrEmpty(user.Name))
+                        List<User>? users = null;
+                        bool loadedAny = false;
+
+                        try
                         {
-                            Console.WriteLine("User data loaded from file:");
-                            Console.WriteLine($"Name: {user.Name}");
-                            Console.WriteLine($"Age: {user.Age}");
-                            Console.WriteLine($"Email: {user.Email}");
-                            Console.WriteLine($"Gender: {user.Gender}");
-                            Console.WriteLine($"Date of Birth: {user.DateOfBirth:yyyy-MM-dd}");
+                            users = JsonSerializer.Deserialize<List<User>>(json);
+                            if (users is { Count: > 0 } && users.Any(u => !string.IsNullOrEmpty(u.Name)))
+                            {
+                                Console.WriteLine($"{users.Count} user(s) loaded from file:\n");
+                                for (int i = 0; i < users.Count; i++)
+                                {
+                                    var user = users[i];
+                                    Console.WriteLine($"--- User #{i + 1} ---");
+                                    Console.WriteLine($"Name: {user.Name}");
+                                    Console.WriteLine($"Age: {user.Age}");
+                                    Console.WriteLine($"Email: {user.Email}");
+                                    Console.WriteLine($"Gender: {user.Gender}");
+                                    Console.WriteLine($"Date of Birth: {user.DateOfBirth:yyyy-MM-dd}");
+                                    Console.WriteLine();
+                                }
+                                loadedAny = true;
+                            }
                         }
-                        else
+                        catch (JsonException ex)
+                        {
+                            //Console.WriteLine("Failed to deserialize as list: " + ex.Message);
+                        }
+
+                        if (!loadedAny)
+                        {
+                            try
+                            {
+                                var user = JsonSerializer.Deserialize<User>(json);
+                                if (user != null && !string.IsNullOrEmpty(user.Name))
+                                {
+                                    Console.WriteLine("User data loaded from file:");
+                                    Console.WriteLine($"Name: {user.Name}");
+                                    Console.WriteLine($"Age: {user.Age}");
+                                    Console.WriteLine($"Email: {user.Email}");
+                                    Console.WriteLine($"Gender: {user.Gender}");
+                                    Console.WriteLine($"Date of Birth: {user.DateOfBirth:yyyy-MM-dd}");
+                                    loadedAny = true;
+                                }
+                            }
+                            catch (JsonException ex)
+                            {
+                                //Console.WriteLine("Failed to deserialize as User object: " + ex.Message);
+                            }
+                        }
+
+                        if (!loadedAny)
                         {
                             Console.WriteLine("File does not contain valid user data.");
                         }
