@@ -3,7 +3,18 @@
 class User
 {
     public string? Name { get; set; }
-    public int Age { get; set; }
+    private int _age;
+    public int Age
+    {
+        get => _age;
+        set
+        {
+            if (value < 0 || value > 100)
+                throw new ArgumentOutOfRangeException($"{value} is invalid");
+
+            _age = value;
+        }
+    }
     public string? Email { get; set; }
     public string? Gender { get; set; }
     public DateTime DateOfBirth { get; set; }
@@ -39,6 +50,8 @@ class Program
 
                     Console.Write("Enter age: ");
                     int age = int.TryParse(Console.ReadLine(), out int tmpAge) ? tmpAge : 0;
+                    if (age < 0 || age >= 100)
+                        throw new ArgumentOutOfRangeException($"{age} is invalid");
 
                     Console.Write("Enter email: ");
                     var email = Console.ReadLine();
