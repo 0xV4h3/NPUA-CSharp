@@ -1,0 +1,45 @@
+{
+  "departments": [
+    { "id": 1, "name": "Computer Science" },
+    { "id": 2, "name": "Mathematics" },
+    { "id": 3, "name": "Physics" }
+  ],
+
+  "groups": [
+    { "id": 1, "name": "CS-201", "year": 2, "departmentId": 1 },
+    { "id": 2, "name": "CS-202", "year": 2, "departmentId": 1 },
+    { "id": 3, "name": "CS-301", "year": 3, "departmentId": 1 },
+    { "id": 4, "name": "MATH-101", "year": 1, "departmentId": 2 },
+    { "id": 5, "name": "PHYS-201", "year": 2, "departmentId": 3 }
+  ],
+
+  "userProfiles": [
+    { "id": 1, "firstName": "Arman", "lastName": "Petrosyan", "email": "arman.petrosyan@example.com", "role": "Student", "isActive": true },
+    { "id": 2, "firstName": "Ani", "lastName": "Hakobyan", "email": "ani.hakobyan@example.com", "role": "Student", "isActive": true },
+    { "id": 3, "firstName": "David", "lastName": "Sargsyan", "email": "david.sargsyan@example.com", "role": "Student", "isActive": true },
+    { "id": 4, "firstName": "Mariam", "lastName": "Karapetyan", "email": "mariam.karapetyan@example.com", "role": "Student", "isActive": true },
+    { "id": 5, "firstName": "Karen", "lastName": "Ghazaryan", "email": "karen.ghazaryan@example.com", "role": "Teacher", "isActive": true },
+    { "id": 6, "firstName": "Lilit", "lastName": "Avetisyan", "email": "lilit.avetisyan@example.com", "role": "Teacher", "isActive": true },
+    { "id": 7, "firstName": "Gor", "lastName": "Mkrtchyan", "email": "gor.mkrtchyan@example.com", "role": "Student", "isActive": true },
+    { "id": 8, "firstName": "Narek", "lastName": "Stepanyan", "email": "narek.stepanyan@example.com", "role": "Student", "isActive": true },
+    { "id": 9, "firstName": "Anna", "lastName": "Melkonyan", "email": "anna.melkonyan@example.com", "role": "Student", "isActive": true },
+    { "id": 10, "firstName": "Tigran", "lastName": "Harutyunyan", "email": "tigran.harutyunyan@example.com", "role": "Student", "isActive": true }
+  ],
+
+  "userGroupMemberships": [
+    { "id": 1, "userProfileId": 1, "groupId": 1, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 2, "userProfileId": 2, "groupId": 1, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 3, "userProfileId": 3, "groupId": 2, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 4, "userProfileId": 4, "groupId": 2, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 5, "userProfileId": 7, "groupId": 3, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 6, "userProfileId": 8, "groupId": 3, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 7, "userProfileId": 9, "groupId": 4, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 8, "userProfileId": 10, "groupId": 5, "isPrimary": true, "fromDate": "2024-09-01", "toDate": null },
+
+    { "id": 9, "userProfileId": 5, "groupId": 1, "isPrimary": false, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 10, "userProfileId": 5, "groupId": 2, "isPrimary": false, "fromDate": "2024-09-01", "toDate": null },
+
+    { "id": 11, "userProfileId": 6, "groupId": 3, "isPrimary": false, "fromDate": "2024-09-01", "toDate": null },
+    { "id": 12, "userProfileId": 6, "groupId": 4, "isPrimary": false, "fromDate": "2024-09-01", "toDate": null }
+  ]
+}

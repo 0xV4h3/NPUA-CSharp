@@ -1,4 +1,6 @@
-﻿using Practical7.Data;
+﻿using System;
+using System.IO;
+using Newtonsoft.Json;
 using Practical7.Models;
 
 namespace Practical7
@@ -7,7 +9,16 @@ namespace Practical7
     {
         public static void Main(string[] args)
         {
-            var seed = SeedData.GetSeed();
+            string jsonPath = Path.Combine("Data", "seed.json");
+
+            if (!File.Exists(jsonPath))
+            {
+                Console.WriteLine($"File {jsonPath} not found!");
+                return;
+            }
+
+            var json = File.ReadAllText(jsonPath);
+            var seed = JsonConvert.DeserializeObject<SeedData>(json);
 
             Console.WriteLine("Departments:");
             foreach (var dept in seed.Departments)
