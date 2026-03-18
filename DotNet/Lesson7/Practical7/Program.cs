@@ -7,7 +7,7 @@ namespace Practical7
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             string jsonPath = Path.Combine("Data", "seed.json");
 
@@ -17,7 +17,7 @@ namespace Practical7
                 return;
             }
 
-            var json = File.ReadAllText(jsonPath);
+            var json = await File.ReadAllTextAsync(jsonPath);
             var seed = JsonConvert.DeserializeObject<SeedData>(json);
 
             Console.WriteLine("Departments:");
