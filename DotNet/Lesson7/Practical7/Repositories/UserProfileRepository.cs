@@ -1,47 +1,40 @@
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using Practical7.Data;
 using Practical7.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Practical7.Repositories
 {
     public class UserProfileRepository : IUserProfileRepository
     {
-        private readonly string _path;
-        private SeedData _seed;
+        private readonly ApplicationDbContext _context;
+        public UserProfileRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-        public UserProfileRepository(string path)
+        public async Task<IEnumerable<UserProfile>> GetAllAsync() =>
+            await _context.UserProfiles.AsNoTracking().ToListAsync();
+
+        public async Task<UserProfile> GetByIdAsync(int id) =>
+            await _context.UserProfiles.FindAsync(id);
+
+        public async Task AddAsync(UserProfile user)
         {
-            _path = path;
-            _seed = JsonConvert.DeserializeObject<SeedData>(File.ReadAllText(_path));
+            await _context.UserProfiles.AddAsync(user);
         }
-        public Task<IEnumerable<UserProfile>> GetAllAsync() =>
-            Task.FromResult(_seed.UserProfiles.AsEnumerable());
-        public Task<UserProfile> GetByIdAsync(int id) =>
-            Task.FromResult(_seed.UserProfiles.FirstOrDefault(u => u.Id == id));
-        public Task AddAsync(UserProfile user)
-        {
-            user.Id = _seed.UserProfiles.Any() ? _seed.UserProfiles.Max(u => u.Id) + 1 : 1;
-            _seed.UserProfiles.Add(user);
-            return Task.CompletedTask;
-        }
+
         public Task UpdateAsync(UserProfile user)
         {
-            var idx = _seed.UserProfiles.FindIndex(x => x.Id == user.Id);
-            if (idx >= 0) _seed.UserProfiles[idx] = user;
+            _context.UserProfiles.Update(user);
             return Task.CompletedTask;
         }
-        public Task DeleteAsync(int id)
+
+        public async Task DeleteAsync(int id)
         {
-            _seed.UserProfiles.RemoveAll(u => u.Id == id);
-            return Task.CompletedTask;
+            var entity = await _context.UserProfiles.FindAsync(id);
+            if (entity != null) _context.UserProfiles.Remove(entity);
         }
-        public async Task SaveAsync()
-        {
-            var content = JsonConvert.SerializeObject(_seed, Formatting.Indented);
-            await File.WriteAllTextAsync(_path, content);
-        }
+
+        public async Task SaveAsync() => await _context.SaveChangesAsync();
     }
 }
